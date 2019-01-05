@@ -1,5 +1,30 @@
-$color: peachpuff;
+* {
+  box-sizing: border-box;
+}
 
-h1 {
-  color: $color;
+body {
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  margin: 0;
+}
+
+.grid {
+  align-items: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  height: 100%;
+  justify-content: center;
+  max-height: 600px;
+  max-width: 600px;
+}
+
+.grid div {
+  border: 1px solid black;
+  flex-grow: 1;
+  height: 30px;
+  width: 30px;
 }

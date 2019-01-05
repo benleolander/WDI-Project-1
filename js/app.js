@@ -1,4 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const h1 = document.querySelector('h1')
-  h1.textContent = 'Hello World'
+$(() => {
+  const width = 10
+  const $grid = $('.grid')
+  let $squares
+
+  for (let i=0; i<width*width; i++) {
+    $grid.append($('<div />'))
+  }
+  $squares = $grid.find('div')
+
 })
