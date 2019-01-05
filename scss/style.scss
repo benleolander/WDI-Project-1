@@ -16,7 +16,7 @@ body {
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
-  height: 100%;
+  // height: 100%;
   justify-content: center;
   max-height: 600px;
   max-width: 600px;
@@ -27,4 +27,8 @@ body {
   flex-grow: 1;
   height: 30px;
   width: 30px;
+}
+
+.grid div.player {
+  background-color: red;
 }
