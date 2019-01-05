@@ -23,7 +23,7 @@ body {
 }
 
 .grid div {
-  border: 1px solid black;
+  // border: 1px solid black;
   flex-grow: 1;
   height: 30px;
   width: 30px;
@@ -31,6 +31,10 @@ body {
 
 .grid div.player {
   background-color: red;
+}
+
+.grid div.enemy {
+border: 1px solid white;
 }
 
 .grid div.aliens1 {

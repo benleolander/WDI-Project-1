@@ -2,9 +2,9 @@ const width = 20
 let $grid
 let $squares
 let playerPosition = (width*width) - (width/2)
-let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 function moveLeft() {
   if(playerPosition > (width*width)-width) {
@@ -24,19 +24,19 @@ function moveRight() {
 
 function spawnAliens() {
   aliens3.forEach(alien3Index =>
-    $squares.eq(alien3Index).addClass('aliens3'))
+    $squares.eq(alien3Index).addClass('enemy aliens3'))
 
   aliens2.forEach(alien2Index =>
-    $squares.eq(alien2Index + width).addClass('aliens2'))
+    $squares.eq(alien2Index + width).addClass('enemy aliens2'))
 
   aliens2.forEach(alien2Index =>
-    $squares.eq(alien2Index + width*2).addClass('aliens2'))
+    $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
 
   aliens1.forEach(alien1Index =>
-    $squares.eq(alien1Index + width*3).addClass('aliens1'))
+    $squares.eq(alien1Index + width*3).addClass('enemy aliens1'))
 
   aliens1.forEach(alien1Index =>
-    $squares.eq(alien1Index + width*4).addClass('aliens1'))
+    $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
 }
 
 function handleKeydown(e) {
