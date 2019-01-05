@@ -2,6 +2,9 @@ const width = 20
 let $grid
 let $squares
 let playerPosition = (width*width) - (width/2)
+let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 function moveLeft() {
   if(playerPosition > (width*width)-width) {
@@ -19,14 +22,31 @@ function moveRight() {
   }
 }
 
+function spawnAliens() {
+  aliens3.forEach(alien3Index =>
+    $squares.eq(alien3Index).addClass('aliens3'))
+
+  aliens2.forEach(alien2Index =>
+    $squares.eq(alien2Index + width).addClass('aliens2'))
+
+  aliens2.forEach(alien2Index =>
+    $squares.eq(alien2Index + width*2).addClass('aliens2'))
+
+  aliens1.forEach(alien1Index =>
+    $squares.eq(alien1Index + width*3).addClass('aliens1'))
+
+  aliens1.forEach(alien1Index =>
+    $squares.eq(alien1Index + width*4).addClass('aliens1'))
+}
+
 function handleKeydown(e) {
-  console.log('Keydown call')
+  // console.log('Keydown call')
   switch(e.keyCode) {
     case 37: moveLeft()
       break
     case 39: moveRight()
       break
-    // case 32: shoot
+    case 32: console.log('Shots fired!')
   }
 }
 
@@ -39,8 +59,10 @@ function init() {
 
   $squares.eq(playerPosition).addClass('player')
 
+  spawnAliens()
+
   $(document).on('keydown', handleKeydown)
-  console.log('Init complete')
+  // console.log('Init complete')
 }
 
 $(init)
