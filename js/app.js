@@ -2,6 +2,10 @@ const width = 20
 let $grid
 let $squares
 let playerPosition = (width*width) - (width/2)
+let movementTimer
+let delay = 1000
+let $enemies
+let alienLineCount = 1
 const aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -19,6 +23,30 @@ function moveRight() {
     $squares.removeClass('player')
     playerPosition++
     $squares.eq(playerPosition).addClass('player')
+  }
+}
+
+function moveAliensDown() {
+  aliens3.forEach(alien3Index => {
+    alien3Index = alien3Index + width
+  })
+}
+
+function moveAliensRight() {
+  aliens3.forEach(alien3Index =>
+    $squares.eq(alien3Index).removeClass('enemy aliens3'))
+
+  const nextIndex = aliens3.shift()
+  aliens3.push(nextIndex + 11)
+
+  aliens3.forEach(alien3Index =>
+    $squares.eq(alien3Index).addClass('enemy aliens3'))
+  if(aliens3.includes((width*alienLineCount)-1)) {
+    alienLineCount++
+    clearTimeout(movementTimer)
+    moveAliensDown()
+  } else {
+    movementTimer = setTimeout(moveAliensRight, delay)
   }
 }
 
@@ -56,10 +84,12 @@ function init() {
     $grid.append($('<div />'))
   }
   $squares = $grid.find('div')
+  $enemies = $('.enemy')
 
   $squares.eq(playerPosition).addClass('player')
 
   spawnAliens()
+  moveAliensRight()
 
   $(document).on('keydown', handleKeydown)
   // console.log('Init complete')
