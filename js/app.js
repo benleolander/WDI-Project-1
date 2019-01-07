@@ -4,12 +4,15 @@ let $squares
 let $scoreboard
 let playerPosition = (width*width) - (width/2)
 let laserPosition
+let alienLaserPosition
 let rightTimer
 let leftTimer
 let laserTimer
+let alienLaserTimer
 let direction
 const delay = 1000
 const laserSpeed = 10
+const alienDifficulty = 0.5
 let alienLineCount = 1
 let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
 // let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -58,6 +61,38 @@ function handleHit() {
 }
 
 //GAME FUNCTIONS > These functions control the game elements
+
+function playerHit() {
+  alert('You are Dead! Your score is ' + score)
+}
+
+function alienLaserPhysics() {
+  $squares.eq(alienLaserPosition).removeClass('alienLaser')
+  alienLaserPosition += width
+  $squares.eq(alienLaserPosition).addClass('alienLaser')
+  if (playerPosition === alienLaserPosition) {
+    playerHit()
+  } else if (alienLaserPosition > width*width) {
+    clearTimeout(alienLaserTimer)
+  } else {
+    alienLaserTimer = setTimeout(alienLaserPhysics, 50)
+  }
+}
+
+function handleAlienShoot() {
+  const firingAlien = aliens3[(Math.floor(Math.random())* aliens3.length)]
+  alienLaserPosition = firingAlien + width
+  $squares.eq(alienLaserPosition).addClass('alienLaser')
+  alienLaserPhysics()
+}
+
+function checkForAlienShoot() {
+  const shootBackProb = Math.random() * 1
+  if (shootBackProb < alienDifficulty) {
+    handleAlienShoot()
+  }
+}
+
 function laserPhysics() {
   $squares.eq(laserPosition).removeClass('laser')
   laserPosition -= width
@@ -83,6 +118,7 @@ function moveAliensLeft() {
   aliens3.forEach(index => {
     $squares.eq(index).addClass('enemy aliens3')
   })
+  checkForAlienShoot()
   if(aliens3.includes(width*(alienLineCount-1))) {
     alienLineCount++
     moveAliensDown()
@@ -129,6 +165,7 @@ function moveAliensRight() {
   aliens3.forEach(index => {
     $squares.eq(index).addClass('enemy aliens3')
   })
+  checkForAlienShoot()
   if(aliens3.includes((width*alienLineCount)-1)) {
     alienLineCount++
     moveAliensDown()
