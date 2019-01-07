@@ -38,11 +38,17 @@ function playerShoot() {
   laserPhysics()
 }
 
+function handleHit() {
+  console.log('hit')
+}
+
 function laserPhysics() {
   $squares.eq(laserPosition).removeClass('laser')
-  laserPosition -= 20
+  laserPosition -= width
   $squares.eq(laserPosition).addClass('laser')
-  if (laserPosition > 0) {
+  if (aliens3.includes(laserPosition)){
+    handleHit()
+  } else if (laserPosition > 0) {
     laserTimer = setTimeout(laserPhysics, laserSpeed)
   } else {
     $squares.eq(laserPosition).removeClass('laser')
