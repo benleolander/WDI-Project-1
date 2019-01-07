@@ -40,8 +40,10 @@ function playerShoot() {
   laserPhysics()
 }
 
+//CONDITIONAL FUNCTIONS > These functions check for certain conditions.
 function checkForWin() {
   if (aliens3.length === 0) {
+    $squares.eq(laserPosition).removeClass('laser aliens3')
     alert('Congratulations, you fought off the invasion. Your score is ' + score)
   }
 }
@@ -55,6 +57,7 @@ function handleHit() {
   checkForWin()
 }
 
+//GAME FUNCTIONS > These functions control the game elements
 function laserPhysics() {
   $squares.eq(laserPosition).removeClass('laser')
   laserPosition -= width
@@ -135,7 +138,7 @@ function moveAliensRight() {
   }
 }
 
-
+//INITALISATION FUNCTIONS > These functions either begin the game, or set the state of the gameboard
 function spawnAliens() {
   aliens3.forEach(index => {
     $squares.eq(index).addClass('enemy aliens3')
@@ -156,7 +159,6 @@ function spawnAliens() {
 }
 
 function handleKeydown(e) {
-  // console.log('Keydown call')
   switch(e.keyCode) {
     case 37: movePlayerLeft()
       break
@@ -181,7 +183,7 @@ function init() {
   moveAliensRight()
 
   $(document).on('keydown', handleKeydown)
-  // console.log('Init complete')
 }
 
+//INITIALISATION
 $(init)
