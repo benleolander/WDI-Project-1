@@ -2,13 +2,15 @@ const width = 20
 let $grid
 let $squares
 let playerPosition = (width*width) - (width/2)
-let movementTimer
-let delay = 1000
-let $enemies
+let rightTimer
+let leftTimer
+let direction
+const delay = 400
+let $enemies = []
 let alienLineCount = 1
-const aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+// const aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+// const aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 function moveLeft() {
   if(playerPosition > (width*width)-width) {
@@ -26,45 +28,92 @@ function moveRight() {
   }
 }
 
-function moveAliensDown() {
-  aliens3.forEach(alien3Index => {
-    alien3Index = alien3Index + width
+function moveAliensLeft() {
+
+  direction = 'left'
+
+  aliens3.forEach(index => {
+    $squares.eq(index).removeClass('enemy aliens3')
   })
+  aliens3 = aliens3.map(element => {
+    return element -1
+  })
+  aliens3.forEach(index => {
+    $squares.eq(index).addClass('enemy aliens3')
+  })
+  if(aliens3.includes(width*(alienLineCount-1))) {
+    alienLineCount++
+    moveAliensDown()
+    clearTimeout(leftTimer)
+  } else {
+    leftTimer = setTimeout(moveAliensLeft, delay)
+  }
+}
+
+function moveAliensDown () {
+  aliens3.forEach(index => {
+    $squares.eq(index).removeClass('enemy aliens3')
+  })
+  aliens3 = aliens3.map(element => {
+    return element + width
+  })
+  aliens3.forEach(index =>
+    $squares.eq(index).addClass('enemy aliens3'))
+
+  switch(direction) {
+    case 'right': moveAliensLeft()
+      break
+    case 'left': moveAliensRight()
+      break
+  }
 }
 
 function moveAliensRight() {
-  aliens3.forEach(alien3Index =>
-    $squares.eq(alien3Index).removeClass('enemy aliens3'))
+
+  direction = 'right'
+
+  aliens3.forEach(index =>
+    $squares.eq(index).removeClass('enemy aliens3'))
 
   const nextIndex = aliens3.shift()
   aliens3.push(nextIndex + 11)
 
-  aliens3.forEach(alien3Index =>
-    $squares.eq(alien3Index).addClass('enemy aliens3'))
+  aliens3.forEach(index =>
+    $squares.eq(index).addClass('enemy aliens3'))
+
+  // aliens3.forEach(index => {
+  //   $squares.eq(index).removeClass('enemy aliens3')
+  //   console.log(aliens3)
+  //   index += 11
+  //   console.log(aliens3)
+  //   $squares.eq(index).addClass('enemy aliens3')
+  //
+  // })
+
   if(aliens3.includes((width*alienLineCount)-1)) {
     alienLineCount++
-    clearTimeout(movementTimer)
     moveAliensDown()
+    clearTimeout(rightTimer)
   } else {
-    movementTimer = setTimeout(moveAliensRight, delay)
+    rightTimer = setTimeout(moveAliensRight, delay)
   }
 }
 
 function spawnAliens() {
-  aliens3.forEach(alien3Index =>
-    $squares.eq(alien3Index).addClass('enemy aliens3'))
-
-  aliens2.forEach(alien2Index =>
-    $squares.eq(alien2Index + width).addClass('enemy aliens2'))
-
-  aliens2.forEach(alien2Index =>
-    $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
-
-  aliens1.forEach(alien1Index =>
-    $squares.eq(alien1Index + width*3).addClass('enemy aliens1'))
-
-  aliens1.forEach(alien1Index =>
-    $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
+  aliens3.forEach(index =>
+    $squares.eq(index).addClass('enemy aliens3'))
+  //
+  // aliens2.forEach(alien2Index =>
+  //   $squares.eq(alien2Index + width).addClass('enemy aliens2'))
+  //
+  // aliens2.forEach(alien2Index =>
+  //   $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
+  //
+  // aliens1.forEach(alien1Index =>
+  //   $squares.eq(alien1Index + width*3).addClass('enemy aliens1'))
+  //
+  // aliens1.forEach(alien1Index =>
+  //   $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
 }
 
 function handleKeydown(e) {
