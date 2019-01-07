@@ -2,17 +2,21 @@ const width = 20
 let $grid
 let $squares
 let playerPosition = (width*width) - (width/2)
+let laserPosition
 let rightTimer
 let leftTimer
+let laserTimer
 let direction
 const delay = 400
-let $enemies = []
+const laserSpeed = 50
+// let $enemies = []
 let alienLineCount = 1
 let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // const aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // const aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-function moveLeft() {
+//CONTROL FUNCTIONS > These functions affect the player craft
+function movePlayerLeft() {
   if(playerPosition > (width*width)-width) {
     $squares.removeClass('player')
     playerPosition--
@@ -20,7 +24,7 @@ function moveLeft() {
   }
 }
 
-function moveRight() {
+function movePlayerRight() {
   if(playerPosition < (width*width)-1) {
     $squares.removeClass('player')
     playerPosition++
@@ -28,10 +32,26 @@ function moveRight() {
   }
 }
 
+function playerShoot() {
+  laserPosition = playerPosition - width
+  $squares.eq(laserPosition).addClass('laser')
+  laserPhysics()
+}
+
+function laserPhysics() {
+  $squares.eq(laserPosition).removeClass('laser')
+  laserPosition -= 20
+  $squares.eq(laserPosition).addClass('laser')
+  if (laserPosition > 0) {
+    laserTimer = setTimeout(laserPhysics, laserSpeed)
+  } else {
+    $squares.eq(laserPosition).removeClass('laser')
+    clearTimeout(laserTimer)
+  }
+}
+
 function moveAliensLeft() {
-
   direction = 'left'
-
   aliens3.forEach(index => {
     $squares.eq(index).removeClass('enemy aliens3')
   })
@@ -59,7 +79,6 @@ function moveAliensDown () {
   })
   aliens3.forEach(index =>
     $squares.eq(index).addClass('enemy aliens3'))
-
   switch(direction) {
     case 'right': moveAliensLeft()
       break
@@ -68,6 +87,8 @@ function moveAliensDown () {
   }
 }
 
+
+//REFACTOR THIS LIKE THE OTHERS TO USE MAP
 function moveAliensRight() {
 
   direction = 'right'
@@ -81,15 +102,6 @@ function moveAliensRight() {
   aliens3.forEach(index =>
     $squares.eq(index).addClass('enemy aliens3'))
 
-  // aliens3.forEach(index => {
-  //   $squares.eq(index).removeClass('enemy aliens3')
-  //   console.log(aliens3)
-  //   index += 11
-  //   console.log(aliens3)
-  //   $squares.eq(index).addClass('enemy aliens3')
-  //
-  // })
-
   if(aliens3.includes((width*alienLineCount)-1)) {
     alienLineCount++
     moveAliensDown()
@@ -100,8 +112,9 @@ function moveAliensRight() {
 }
 
 function spawnAliens() {
-  aliens3.forEach(index =>
-    $squares.eq(index).addClass('enemy aliens3'))
+  aliens3.forEach(index => {
+    $squares.eq(index).addClass('enemy aliens3')
+  })
   //
   // aliens2.forEach(alien2Index =>
   //   $squares.eq(alien2Index + width).addClass('enemy aliens2'))
@@ -119,11 +132,11 @@ function spawnAliens() {
 function handleKeydown(e) {
   // console.log('Keydown call')
   switch(e.keyCode) {
-    case 37: moveLeft()
+    case 37: movePlayerLeft()
       break
-    case 39: moveRight()
+    case 39: movePlayerRight()
       break
-    case 32: console.log('Shots fired!')
+    case 32: playerShoot()
   }
 }
 
@@ -133,7 +146,7 @@ function init() {
     $grid.append($('<div />'))
   }
   $squares = $grid.find('div')
-  $enemies = $('.enemy')
+  // $enemies = $('.enemy')
 
   $squares.eq(playerPosition).addClass('player')
 
