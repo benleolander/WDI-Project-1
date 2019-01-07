@@ -47,9 +47,9 @@ background-size: 100%;
   background-size: contain;
 }
 
-// .grid div.enemy {
-// border: 1px solid white;
-// }
+.grid div.enemy {
+border: 1px solid white;
+}
 
 .grid div.aliens1 {
   background-color: lime;
@@ -60,7 +60,13 @@ background-size: 100%;
 }
 
 .grid div.aliens3 {
-  background-image: url("../assets/enemyBlack3.png");
-  background-repeat: no-repeat;
-  background-size: 100%;
+  background-color: coral
+  // background-image: url("../assets/enemyBlack3.png");
+  // background-repeat: no-repeat;
+  // background-size: 100%;
+}
+
+.grid div.hidden {
+  // opacity: 0;
+  background-color: red
 }
