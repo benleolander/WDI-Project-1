@@ -7,8 +7,8 @@ let rightTimer
 let leftTimer
 let laserTimer
 let direction
-const delay = 400
-const laserSpeed = 50
+const delay = 500
+const laserSpeed = 10
 // let $enemies = []
 let alienLineCount = 1
 let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -39,7 +39,9 @@ function playerShoot() {
 }
 
 function handleHit() {
-  console.log('hit')
+  $squares.eq(laserPosition).removeClass('laser aliens3')
+  const deadAlien = aliens3.indexOf(laserPosition)
+  aliens3.splice(deadAlien, 1)
 }
 
 function laserPhysics() {
@@ -94,20 +96,17 @@ function moveAliensDown () {
 }
 
 
-//REFACTOR THIS LIKE THE OTHERS TO USE MAP
 function moveAliensRight() {
-
   direction = 'right'
-
-  aliens3.forEach(index =>
-    $squares.eq(index).removeClass('enemy aliens3'))
-
-  const nextIndex = aliens3.shift()
-  aliens3.push(nextIndex + 11)
-
-  aliens3.forEach(index =>
-    $squares.eq(index).addClass('enemy aliens3'))
-
+  aliens3.forEach(index => {
+    $squares.eq(index).removeClass('enemy aliens3')
+  })
+  aliens3 = aliens3.map(element => {
+    return element + 1
+  })
+  aliens3.forEach(index => {
+    $squares.eq(index).addClass('enemy aliens3')
+  })
   if(aliens3.includes((width*alienLineCount)-1)) {
     alienLineCount++
     moveAliensDown()
