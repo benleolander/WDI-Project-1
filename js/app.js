@@ -1,19 +1,21 @@
 const width = 20
 let $grid
 let $squares
+let $scoreboard
 let playerPosition = (width*width) - (width/2)
 let laserPosition
 let rightTimer
 let leftTimer
 let laserTimer
 let direction
-const delay = 50
+const delay = 1000
 const laserSpeed = 10
-// let $enemies = []
 let alienLineCount = 1
 let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-// const aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-// const aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let enemies = []
+let score = 0
 
 //CONTROL FUNCTIONS > These functions affect the player craft
 function movePlayerLeft() {
@@ -38,10 +40,19 @@ function playerShoot() {
   laserPhysics()
 }
 
+function checkForWin() {
+  if (aliens3.length === 0) {
+    alert('Congratulations, you fought off the invasion. Your score is ' + score)
+  }
+}
+
 function handleHit() {
+  score += 10
+  $scoreboard.text(score)
   $squares.eq(laserPosition).removeClass('laser aliens3')
   const deadAlien = aliens3.indexOf(laserPosition)
   aliens3.splice(deadAlien, 1)
+  checkForWin()
 }
 
 function laserPhysics() {
@@ -81,7 +92,7 @@ function moveAliensLeft() {
 function moveAliensDown () {
   //Check for player loss
   if (aliens3[aliens3.length-1] > (width*(width-2))) {
-    alert('Game Over!')
+    alert('Game Over! Your score is ' + score)
   } else {
     //Move each alien down one row
     aliens3.forEach(index => {
@@ -124,19 +135,21 @@ function moveAliensRight() {
   }
 }
 
+
 function spawnAliens() {
   aliens3.forEach(index => {
     $squares.eq(index).addClass('enemy aliens3')
   })
-  //
+
   // aliens2.forEach(alien2Index =>
   //   $squares.eq(alien2Index + width).addClass('enemy aliens2'))
-  //
+
   // aliens2.forEach(alien2Index =>
   //   $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
   //
   // aliens1.forEach(alien1Index =>
-  //   $squares.eq(alien1Index + width*3).addClass('enemy aliens1'))
+  //   $squares.eq(alien1Index + width*2).addClass('enemy aliens1'))
+  //REMEBER TO ADJUST THE WIDTH ABOVE TO 3
   //
   // aliens1.forEach(alien1Index =>
   //   $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
@@ -159,10 +172,11 @@ function init() {
     $grid.append($('<div />'))
   }
   $squares = $grid.find('div')
-  // $enemies = $('.enemy')
+  $scoreboard = $('.scoreboard')
 
   $squares.eq(playerPosition).addClass('player')
 
+  enemies.push(aliens3, aliens2, aliens1)
   spawnAliens()
   moveAliensRight()
 
