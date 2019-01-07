@@ -30,16 +30,26 @@ body {
 }
 
 .grid div.player {
-  background-color: red;
+background-image: url("../assets/playerShip3_blue.png");
+background-repeat: no-repeat;
+background-size: 100%;
 }
 
 .grid div.laser {
-  background-color: gold;
+  background-image: url("../assets/laserRed01.png");
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
-.grid div.enemy {
-border: 1px solid white;
+.grid div.alienLaser {
+  background-image: url("../assets/laserGreen11.png");
+  background-repeat: no-repeat;
+  background-size: contain;
 }
+
+// .grid div.enemy {
+// border: 1px solid white;
+// }
 
 .grid div.aliens1 {
   background-color: lime;
@@ -50,5 +60,7 @@ border: 1px solid white;
 }
 
 .grid div.aliens3 {
-  background-color: coral;
+  background-image: url("../assets/enemyBlack3.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
 }

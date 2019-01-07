@@ -11,10 +11,10 @@ let direction
 const delay = 1000
 const laserSpeed = 10
 let alienLineCount = 1
-let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-let enemies = []
+let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+// let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+// let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+// let enemies = []
 let score = 0
 
 //CONTROL FUNCTIONS > These functions affect the player craft
@@ -178,7 +178,7 @@ function init() {
 
   $squares.eq(playerPosition).addClass('player')
 
-  enemies.push(aliens3, aliens2, aliens1)
+  // enemies.push(aliens3, aliens2, aliens1)
   spawnAliens()
   moveAliensRight()
 
