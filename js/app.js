@@ -7,7 +7,7 @@ let rightTimer
 let leftTimer
 let laserTimer
 let direction
-const delay = 500
+const delay = 50
 const laserSpeed = 10
 // let $enemies = []
 let alienLineCount = 1
@@ -79,19 +79,27 @@ function moveAliensLeft() {
 }
 
 function moveAliensDown () {
-  aliens3.forEach(index => {
-    $squares.eq(index).removeClass('enemy aliens3')
-  })
-  aliens3 = aliens3.map(element => {
-    return element + width
-  })
-  aliens3.forEach(index =>
-    $squares.eq(index).addClass('enemy aliens3'))
-  switch(direction) {
-    case 'right': moveAliensLeft()
-      break
-    case 'left': moveAliensRight()
-      break
+  //Check for player loss
+  if (aliens3[aliens3.length-1] > (width*(width-2))) {
+    alert('Game Over!')
+  } else {
+    //Move each alien down one row
+    aliens3.forEach(index => {
+      $squares.eq(index).removeClass('enemy aliens3')
+    })
+    aliens3 = aliens3.map(element => {
+      return element + width
+    })
+    aliens3.forEach(index => {
+      $squares.eq(index).addClass('enemy aliens3')
+    })
+    //Switch direction once moved down a row
+    switch(direction) {
+      case 'right': moveAliensLeft()
+        break
+      case 'left': moveAliensRight()
+        break
+    }
   }
 }
 
