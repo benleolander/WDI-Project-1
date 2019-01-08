@@ -2,24 +2,23 @@ const width = 20
 let $grid
 let $squares
 let $scoreboard
+let $startScreen
 let playerPosition = (width*width) - (width/2)
 let laserPosition
 let alienLaserPosition
+let mothershipPosition
 let rightTimer
 let leftTimer
 let laserTimer
 let alienLaserTimer
 let direction
-const delay = 1000
+let delay
 const laserSpeed = 10
-const alienDifficulty = 0.5
+let alienDifficulty
 let alienLineCount = 1
-// let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-// let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-// let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const enemies = []
+let enemies = []
 let enemiesIndices= []
-let score = 0
+let score
 
 //CONTROL FUNCTIONS > These functions affect the player craft
 function movePlayerLeft() {
@@ -45,25 +44,37 @@ function playerShoot() {
 }
 
 //CONDITIONAL FUNCTIONS > These functions check for certain conditions.
+
+function levelUp() {
+  delay -= 200
+  console.log(delay)
+  alienDifficulty += 0.1
+  console.log(alienDifficulty)
+  enemies = []
+  enemiesIndices = []
+  alienLineCount = 1
+  clearTimeout(leftTimer)
+  clearTimeout(rightTimer)
+  spawnAliens()
+  updateIndices()
+  moveAliensRight()
+}
+
 function checkForWin() {
   if (enemiesIndices.length === 0) {
     $squares.eq(laserPosition).removeClass('laser aliens3')
-    alert('Congratulations, you fought off the invasion. Your score is ' + score)
+    setTimeout(levelUp, 2000)
   }
 }
 
 function handleHit() {
   const deadAlien = enemies[enemiesIndices.indexOf(laserPosition)]
   score += deadAlien.points
-  $scoreboard.text(score)
+  $scoreboard.text('Score: ' + score)
   $squares.eq(laserPosition).removeClass()
   enemies.splice(enemiesIndices.indexOf(laserPosition), 1)
   updateIndices()
   checkForWin()
-
-  // console.log('hit!')
-  // score +=
-  // const deadAlien = enemies.indexOf(laserPosition)
 }
 
 //GAME FUNCTIONS > These functions control the game elements
@@ -81,7 +92,7 @@ function alienLaserPhysics() {
   } else if (alienLaserPosition > width*width) {
     clearTimeout(alienLaserTimer)
   } else {
-    alienLaserTimer = setTimeout(alienLaserPhysics, 50)
+    alienLaserTimer = setTimeout(alienLaserPhysics, 40)
   }
 }
 
@@ -96,6 +107,33 @@ function checkForAlienShoot() {
   const shootBackProb = Math.random()
   if (shootBackProb < alienDifficulty) {
     handleAlienShoot()
+  }
+}
+
+function moveMothership() {
+  $squares.eq(mothershipPosition).removeClass('mothership')
+  console.log(mothershipPosition)
+  mothershipPosition += 1
+  $squares.eq(mothershipPosition).addClass('mothership')
+  if (mothershipPosition !== width) {
+    setTimeout(moveMothership, 250)
+  } else {
+    $squares.eq(mothershipPosition).removeClass('mothership')
+  }
+}
+
+function spawnMothership() {
+  console.log('mothership is here')
+  mothershipPosition = 0
+  $squares.eq(mothershipPosition).addClass('mothership')
+  setTimeout(moveMothership, 250)
+}
+
+function checkForMothership() {
+  // const mothershipProb = Math.random()
+  const mothershipProb = 0.9
+  if (mothershipProb > 0.6) {
+    spawnMothership()
   }
 }
 
@@ -184,25 +222,23 @@ function moveAliensRight() {
   }
 }
 
+
+
 //INITALISATION FUNCTIONS > These functions either begin the game, or set the state of the gameboard
 
 function spawnAliens() {
   for (let i=0; i < 11; i++) {
     enemies.push(new Alien(i, 30, 'aliens3'))
   }
-
   for (let i=0; i < 11; i++) {
     enemies.push(new Alien(i+width, 20, 'aliens2'))
   }
-
   for (let i=0; i < 11; i++) {
     enemies.push(new Alien(i+width*2, 20, 'aliens2'))
   }
-
   for (let i=0; i < 11; i++) {
     enemies.push(new Alien(i+width*3, 10, 'aliens1'))
   }
-
   for (let i=0; i < 11; i++) {
     enemies.push(new Alien(i+width*4, 10, 'aliens1'))
   }
@@ -210,29 +246,9 @@ function spawnAliens() {
   enemies.forEach(alien => {
     $squares.eq(alien.alienIndex).addClass(alien.type)
   })
+
+  setTimeout(checkForMothership, 15000)
 }
-
-
-
-
-// function spawnAliens() {
-//   aliens3.forEach(index => {
-//     $squares.eq(index).addClass('enemy aliens3')
-//   })
-//
-//   // aliens2.forEach(alien2Index =>
-//   //   $squares.eq(alien2Index + width).addClass('enemy aliens2'))
-//
-//   // aliens2.forEach(alien2Index =>
-//   //   $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
-//   //
-//   // aliens1.forEach(alien1Index =>
-//   //   $squares.eq(alien1Index + width*2).addClass('enemy aliens1'))
-//   //REMEBER TO ADJUST THE WIDTH ABOVE TO 3
-//   //
-//   // aliens1.forEach(alien1Index =>
-//   //   $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
-// }
 
 function handleKeydown(e) {
   switch(e.keyCode) {
@@ -240,7 +256,10 @@ function handleKeydown(e) {
       break
     case 39: movePlayerRight()
       break
-    case 32: playerShoot()
+    case 32: {
+      e.preventDefault()
+      playerShoot()
+    }
   }
 }
 
@@ -261,21 +280,33 @@ class Alien{
   }
 }
 
-function init() {
+function initGame() {
+  $startScreen = $('.startScreen')
+  $startScreen.hide()
+
   $grid = $('.grid')
   for (let i=0; i<width*width; i++) {
     $grid.append($('<div />'))
   }
   $squares = $grid.find('div')
   $scoreboard = $('.scoreboard')
+  $scoreboard.show()
 
   $squares.eq(playerPosition).addClass('player')
 
-  // enemies.push(aliens3, aliens2, aliens1)
   spawnAliens()
   moveAliensRight()
+}
 
+function init() {
   $(document).on('keydown', handleKeydown)
+
+  delay = 1000
+  alienDifficulty = 0.5
+  score = 0
+
+  const $startButton = $('#startButton')
+  $startButton.on('click', initGame)
 }
 
 //INITIALISATION
