@@ -6,7 +6,9 @@ let $startScreen
 let playerPosition = (width*width) - (width/2)
 let laserPosition
 let alienLaserPosition
+let mothershipDestroyed
 let mothershipPosition
+let mothershipTimer
 let rightTimer
 let leftTimer
 let laserTimer
@@ -55,6 +57,7 @@ function levelUp() {
   alienLineCount = 1
   clearTimeout(leftTimer)
   clearTimeout(rightTimer)
+  clearTimeout(mothershipTimer)
   spawnAliens()
   updateIndices()
   moveAliensRight()
@@ -65,6 +68,12 @@ function checkForWin() {
     $squares.eq(laserPosition).removeClass('laser aliens3')
     setTimeout(levelUp, 2000)
   }
+}
+
+function handleMothershipHit() {
+  score += 250
+  mothershipDestroyed = true
+  $scoreboard.text('Score: ' + score)
 }
 
 function handleHit() {
@@ -112,28 +121,29 @@ function checkForAlienShoot() {
 
 function moveMothership() {
   $squares.eq(mothershipPosition).removeClass('mothership')
-  console.log(mothershipPosition)
   mothershipPosition += 1
   $squares.eq(mothershipPosition).addClass('mothership')
-  if (mothershipPosition !== width) {
+  if (mothershipPosition !== width && mothershipDestroyed === false) {
     setTimeout(moveMothership, 250)
   } else {
     $squares.eq(mothershipPosition).removeClass('mothership')
+    mothershipTimer = setTimeout(checkForMothership, 15000)
   }
 }
 
 function spawnMothership() {
-  console.log('mothership is here')
+  mothershipDestroyed = false
   mothershipPosition = 0
   $squares.eq(mothershipPosition).addClass('mothership')
   setTimeout(moveMothership, 250)
 }
 
 function checkForMothership() {
-  // const mothershipProb = Math.random()
-  const mothershipProb = 0.9
+  const mothershipProb = Math.random()
   if (mothershipProb > 0.6) {
     spawnMothership()
+  } else {
+    mothershipTimer = setTimeout(checkForMothership, 15000)
   }
 }
 
@@ -143,6 +153,8 @@ function laserPhysics() {
   $squares.eq(laserPosition).addClass('laser')
   if (enemiesIndices.includes(laserPosition)){
     handleHit()
+  } else if ($squares.eq(laserPosition).hasClass('mothership')) {
+    handleMothershipHit()
   } else if (laserPosition > 0) {
     laserTimer = setTimeout(laserPhysics, laserSpeed)
   } else {
