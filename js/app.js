@@ -80,14 +80,14 @@ function alienLaserPhysics() {
 }
 
 function handleAlienShoot() {
-  const firingAlien = aliens3[(Math.floor(Math.random())* aliens3.length)]
+  const firingAlien = aliens3[Math.floor(Math.random() * aliens3.length)]
   alienLaserPosition = firingAlien + width
   $squares.eq(alienLaserPosition).addClass('alienLaser')
   alienLaserPhysics()
 }
 
 function checkForAlienShoot() {
-  const shootBackProb = Math.random() * 1
+  const shootBackProb = Math.random()
   if (shootBackProb < alienDifficulty) {
     handleAlienShoot()
   }
@@ -204,6 +204,8 @@ function handleKeydown(e) {
     case 32: playerShoot()
   }
 }
+
+
 
 function init() {
   $grid = $('.grid')
