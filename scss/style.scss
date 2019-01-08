@@ -52,11 +52,17 @@ border: 1px solid white;
 }
 
 .grid div.aliens1 {
-  background-color: lime;
+  // background-color: lime;
+  background-image: url("../assets/enemyBlack1.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
 
 .grid div.aliens2 {
-  background-color: blue;
+  // background-color: blue;
+  background-image: url("../assets/enemyBlack2.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
 
 .grid div.aliens3 {

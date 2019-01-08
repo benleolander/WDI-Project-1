@@ -14,10 +14,11 @@ const delay = 1000
 const laserSpeed = 10
 const alienDifficulty = 0.5
 let alienLineCount = 1
-let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+// let aliens3 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
 // let aliens2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // let aliens1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-// let enemies = []
+const enemies = []
+let enemiesIndices= []
 let score = 0
 
 //CONTROL FUNCTIONS > These functions affect the player craft
@@ -45,19 +46,24 @@ function playerShoot() {
 
 //CONDITIONAL FUNCTIONS > These functions check for certain conditions.
 function checkForWin() {
-  if (aliens3.length === 0) {
+  if (enemiesIndices.length === 0) {
     $squares.eq(laserPosition).removeClass('laser aliens3')
     alert('Congratulations, you fought off the invasion. Your score is ' + score)
   }
 }
 
 function handleHit() {
-  score += 10
+  const deadAlien = enemies[enemiesIndices.indexOf(laserPosition)]
+  score += deadAlien.points
   $scoreboard.text(score)
-  $squares.eq(laserPosition).removeClass('laser aliens3')
-  const deadAlien = aliens3.indexOf(laserPosition)
-  aliens3.splice(deadAlien, 1)
+  $squares.eq(laserPosition).removeClass()
+  enemies.splice(enemiesIndices.indexOf(laserPosition), 1)
+  updateIndices()
   checkForWin()
+
+  // console.log('hit!')
+  // score +=
+  // const deadAlien = enemies.indexOf(laserPosition)
 }
 
 //GAME FUNCTIONS > These functions control the game elements
@@ -80,7 +86,7 @@ function alienLaserPhysics() {
 }
 
 function handleAlienShoot() {
-  const firingAlien = aliens3[Math.floor(Math.random() * aliens3.length)]
+  const firingAlien = enemiesIndices[Math.floor(Math.random() * enemies.length)]
   alienLaserPosition = firingAlien + width
   $squares.eq(alienLaserPosition).addClass('alienLaser')
   alienLaserPhysics()
@@ -97,7 +103,7 @@ function laserPhysics() {
   $squares.eq(laserPosition).removeClass('laser')
   laserPosition -= width
   $squares.eq(laserPosition).addClass('laser')
-  if (aliens3.includes(laserPosition)){
+  if (enemiesIndices.includes(laserPosition)){
     handleHit()
   } else if (laserPosition > 0) {
     laserTimer = setTimeout(laserPhysics, laserSpeed)
@@ -109,17 +115,16 @@ function laserPhysics() {
 
 function moveAliensLeft() {
   direction = 'left'
-  aliens3.forEach(index => {
-    $squares.eq(index).removeClass('enemy aliens3')
+  enemies.forEach(alien => {
+    $squares.eq(alien.alienIndex).removeClass(alien.type)
+    alien.moveLeft()
   })
-  aliens3 = aliens3.map(element => {
-    return element -1
-  })
-  aliens3.forEach(index => {
-    $squares.eq(index).addClass('enemy aliens3')
+  updateIndices()
+  enemies.forEach(alien => {
+    $squares.eq(alien.alienIndex).addClass(alien.type)
   })
   checkForAlienShoot()
-  if(aliens3.includes(width*(alienLineCount-1))) {
+  if(enemiesIndices.includes(width*(alienLineCount-1))) {
     alienLineCount++
     moveAliensDown()
     clearTimeout(leftTimer)
@@ -130,18 +135,17 @@ function moveAliensLeft() {
 
 function moveAliensDown () {
   //Check for player loss
-  if (aliens3[aliens3.length-1] > (width*(width-2))) {
+  if (enemiesIndices[enemiesIndices.length-1] > (width*(width-2))) {
     alert('Game Over! Your score is ' + score)
   } else {
     //Move each alien down one row
-    aliens3.forEach(index => {
-      $squares.eq(index).removeClass('enemy aliens3')
+    enemies.forEach(alien => {
+      $squares.eq(alien.alienIndex).removeClass(alien.type)
+      alien.moveDown()
     })
-    aliens3 = aliens3.map(element => {
-      return element + width
-    })
-    aliens3.forEach(index => {
-      $squares.eq(index).addClass('enemy aliens3')
+    updateIndices()
+    enemies.forEach(alien => {
+      $squares.eq(alien.alienIndex).addClass(alien.type)
     })
     //Switch direction once moved down a row
     switch(direction) {
@@ -153,20 +157,25 @@ function moveAliensDown () {
   }
 }
 
+function updateIndices() {
+  enemiesIndices = []
+  enemies.forEach(alien => {
+    enemiesIndices.push(alien.alienIndex)
+  })
+}
 
 function moveAliensRight() {
   direction = 'right'
-  aliens3.forEach(index => {
-    $squares.eq(index).removeClass('enemy aliens3')
+  enemies.forEach(alien => {
+    $squares.eq(alien.alienIndex).removeClass(alien.type)
+    alien.moveRight()
   })
-  aliens3 = aliens3.map(element => {
-    return element + 1
-  })
-  aliens3.forEach(index => {
-    $squares.eq(index).addClass('enemy aliens3')
+  updateIndices()
+  enemies.forEach(alien => {
+    $squares.eq(alien.alienIndex).addClass(alien.type)
   })
   checkForAlienShoot()
-  if(aliens3.includes((width*alienLineCount)-1)) {
+  if(enemiesIndices.includes((width*alienLineCount)-1)) {
     alienLineCount++
     moveAliensDown()
     clearTimeout(rightTimer)
@@ -176,24 +185,54 @@ function moveAliensRight() {
 }
 
 //INITALISATION FUNCTIONS > These functions either begin the game, or set the state of the gameboard
+
 function spawnAliens() {
-  aliens3.forEach(index => {
-    $squares.eq(index).addClass('enemy aliens3')
+  for (let i=0; i < 11; i++) {
+    enemies.push(new Alien(i, 30, 'aliens3'))
+  }
+
+  for (let i=0; i < 11; i++) {
+    enemies.push(new Alien(i+width, 20, 'aliens2'))
+  }
+
+  for (let i=0; i < 11; i++) {
+    enemies.push(new Alien(i+width*2, 20, 'aliens2'))
+  }
+
+  for (let i=0; i < 11; i++) {
+    enemies.push(new Alien(i+width*3, 10, 'aliens1'))
+  }
+
+  for (let i=0; i < 11; i++) {
+    enemies.push(new Alien(i+width*4, 10, 'aliens1'))
+  }
+
+  enemies.forEach(alien => {
+    $squares.eq(alien.alienIndex).addClass(alien.type)
   })
-
-  // aliens2.forEach(alien2Index =>
-  //   $squares.eq(alien2Index + width).addClass('enemy aliens2'))
-
-  // aliens2.forEach(alien2Index =>
-  //   $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
-  //
-  // aliens1.forEach(alien1Index =>
-  //   $squares.eq(alien1Index + width*2).addClass('enemy aliens1'))
-  //REMEBER TO ADJUST THE WIDTH ABOVE TO 3
-  //
-  // aliens1.forEach(alien1Index =>
-  //   $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
 }
+
+
+
+
+// function spawnAliens() {
+//   aliens3.forEach(index => {
+//     $squares.eq(index).addClass('enemy aliens3')
+//   })
+//
+//   // aliens2.forEach(alien2Index =>
+//   //   $squares.eq(alien2Index + width).addClass('enemy aliens2'))
+//
+//   // aliens2.forEach(alien2Index =>
+//   //   $squares.eq(alien2Index + width*2).addClass('enemy aliens2'))
+//   //
+//   // aliens1.forEach(alien1Index =>
+//   //   $squares.eq(alien1Index + width*2).addClass('enemy aliens1'))
+//   //REMEBER TO ADJUST THE WIDTH ABOVE TO 3
+//   //
+//   // aliens1.forEach(alien1Index =>
+//   //   $squares.eq(alien1Index + width*4).addClass('enemy aliens1'))
+// }
 
 function handleKeydown(e) {
   switch(e.keyCode) {
@@ -205,7 +244,22 @@ function handleKeydown(e) {
   }
 }
 
-
+class Alien{
+  constructor(alienIndex, points, type) {
+    this.alienIndex = alienIndex
+    this.points = points
+    this.type = type
+  }
+  moveDown(){
+    this.alienIndex = this.alienIndex+width
+  }
+  moveLeft(){
+    this.alienIndex = this.alienIndex-1
+  }
+  moveRight(){
+    this.alienIndex= this.alienIndex+1
+  }
+}
 
 function init() {
   $grid = $('.grid')
