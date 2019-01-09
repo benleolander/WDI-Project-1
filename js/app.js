@@ -18,12 +18,20 @@ let laserTimer
 let alienLaserTimer
 let direction
 let delay
+let firingDelay = false
 const laserSpeed = 10
 let alienDifficulty
 let alienLineCount = 1
 let enemies = []
 let enemiesIndices= []
 let score
+
+//AUDIO VARIABLES
+const shootSound = new Audio('./assets/sounds/shoot.wav')
+const mothershipSound = new Audio('./assets/sounds/ufo_highpitch.wav')
+const mothershipDeathSound = new Audio('./assets/sounds/explosion.wav')
+const alienDeathSound = new Audio('./assets/sounds/invaderkilled.wav')
+
 
 //SCOREBOARD > These functions manage the scoreboard & high score table
 
@@ -109,6 +117,7 @@ function movePlayerRight() {
 function playerShoot() {
   laserPosition = playerPosition - width
   $squares.eq(laserPosition).addClass('laser')
+  shootSound.play()
   laserPhysics()
 }
 
@@ -140,6 +149,7 @@ function checkForWin() {
 function handleMothershipHit() {
   score += 250
   mothershipDestroyed = true
+  mothershipDeathSound.play()
   $scoreboard.text('Score: ' + score)
 }
 
@@ -150,6 +160,7 @@ function handleHit() {
   $squares.eq(laserPosition).removeClass()
   enemies.splice(enemiesIndices.indexOf(laserPosition), 1)
   updateIndices()
+  alienDeathSound.play()
   checkForWin()
 }
 
@@ -206,6 +217,7 @@ function checkForAlienShoot() {
 function moveMothership() {
   $squares.eq(mothershipPosition).removeClass('mothership')
   mothershipPosition += 1
+  mothershipSound.play()
   $squares.eq(mothershipPosition).addClass('mothership')
   if (mothershipPosition !== width && mothershipDestroyed === false) {
     setTimeout(moveMothership, 250)
@@ -219,12 +231,12 @@ function spawnMothership() {
   mothershipDestroyed = false
   mothershipPosition = 0
   $squares.eq(mothershipPosition).addClass('mothership')
-  setTimeout(moveMothership, 250)
+  setTimeout(moveMothership, 200)
 }
 
 function checkForMothership() {
   const mothershipProb = Math.random()
-  if (mothershipProb > 0.6) {
+  if (mothershipProb > 0) {
     spawnMothership()
   } else {
     mothershipTimer = setTimeout(checkForMothership, 15000)
@@ -353,6 +365,10 @@ function spawnAliens() {
   setTimeout(checkForMothership, 15000)
 }
 
+function setFiringDelayFalse() {
+  firingDelay = false
+}
+
 function handleKeydown(e) {
   switch(e.keyCode) {
     case 37: movePlayerLeft()
@@ -361,8 +377,12 @@ function handleKeydown(e) {
       break
     case 32: {
       e.preventDefault()
-      playerShoot()
-      break
+      if (!firingDelay){
+        firingDelay = true
+        playerShoot()
+        setTimeout(setFiringDelayFalse, 400 )
+        break
+      } break
     }
     //Case 27 for Development use only. Simulates player death.
     case 27: {
