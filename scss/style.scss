@@ -7,17 +7,22 @@ body {
   height: 100vh;
   justify-content: center;
   margin: 0;
-}
+  background-image: url("../assets/background.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;}
 
 h1 {
   text-align: center;
   font-family: 'Press Start 2P', cursive;
+  color: white;
 }
 
 .startScreen {
   text-align: center;
   font-family: 'Press Start 2P', cursive;
-  border: 5px solid black;
+  color: white;
+  border: 5px solid white;
   background-color: transparent;
   padding: 20px;
   width: 300px;
@@ -32,7 +37,8 @@ h1 {
   display: none;
   text-align: center;
   font-family: 'Press Start 2P', cursive;
-  border: 5px solid black;
+  color: white;
+  border: 5px solid white;
   background-color: transparent;
   padding: 20px;
   width: 300px;
@@ -43,10 +49,20 @@ h1 {
   font-size: 0.7em
 }
 
+.scoreBoardName {
+  text-align: left;
+}
+.scoreBoardScore {
+  width: 25%;
+  max-width: 25%;
+  float: right;
+  text-align: right;
+}
+
 button {
   font-family: 'Press Start 2P', cursive;
-  color: black;
-  border: 5px solid black;
+  color: white;
+  border: 5px solid white;
   background-color: transparent;
   padding: 10px;
 }
@@ -55,11 +71,11 @@ h2 {
   display: none;
   text-align: right;
   font-family: 'Press Start 2P', cursive;
+  color: white;
 }
 
 .grid {
   align-items: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
@@ -71,28 +87,31 @@ h2 {
 }
 
 .grid div {
-  // border: 1px solid black;
   flex-grow: 1;
   height: 30px;
   width: 30px;
+  cursor: none;
 }
 
 .grid div.player {
 background-image: url("../assets/playerShip3_blue.png");
 background-repeat: no-repeat;
 background-size: 100%;
+transform: scale(1.5);
 }
 
 .grid div.laser {
   background-image: url("../assets/laserRed01.png");
   background-repeat: no-repeat;
   background-size: contain;
+  background-position: center;
 }
 
 .grid div.alienLaser {
   background-image: url("../assets/laserGreen11.png");
   background-repeat: no-repeat;
   background-size: contain;
+  background-position: center;
 }
 
 .grid div.aliens1 {
@@ -117,4 +136,20 @@ background-size: 100%;
   background-image: url("../assets/Mothership.png");
   background-repeat: no-repeat;
   background-size: 100%;
+}
+
+//ANIMATIONS
+
+.flash {
+   animation-name: flash;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: running;
+}
+
+@keyframes flash {
+    from {color: white;}
+    to {color: dodgerblue;}
 }

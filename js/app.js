@@ -29,11 +29,9 @@ let score
 
 function displayHighScores() {
   $endScreen.empty()
-  console.table(highScores)
   for (let i=0; i<highScores.length; i++) {
     $endScreen.append('<h2>High Scores</h2>')
-    $endScreen.append('<p id="scoreBoardName'+i+'">'+highScores[i].userName+'</p>')
-    $endScreen.append('<p id="scoreBoardScore'+i+'">'+highScores[i].score+'</p>')
+    $endScreen.append('<p class="scoreBoardName">'+highScores[i].userName.toUpperCase()+'<span class="scoreBoardScore">'+highScores[i].score+'</span></p>')
   }
 }
 
@@ -44,7 +42,6 @@ function submitHighScore() {
       highScores.splice(i, 0, newHighScore)
       highScores.pop()
       localStorage.setItem('scores', JSON.stringify(highScores))
-      console.log('High Scores saved')
       displayHighScores()
       break
     }
@@ -53,7 +50,7 @@ function submitHighScore() {
 
 function  saveHighScore() {
   $endScreen.empty()
-  $endScreen.append('<form class="highScoreForm"><input type="text" name="userName" value ="TEST"><br><input type="submit" value="Submit"></form>')
+  $endScreen.append('<form class="highScoreForm"><input type="text" name="userName" placeholder ="NAME"><br><input type="submit" value="Submit"></form>')
 
   const $highScoreForm = $('form')
   const $userName = $('[name="userName"]')
@@ -72,7 +69,7 @@ class highScore {
   }
 }
 
-//DEV ONLY > This fills the scoreboard with placeholder data. Should be called from the console to overwrite user local storage
+//DEV ONLY > This function fills the scoreboard with placeholder data. Should be called from the console to overwrite user local storage. Will erase any saved high scores.
 function overwriteScoreboard() {
   highScores = []
   highScores.push(new highScore('BEN', 1000))
@@ -80,7 +77,7 @@ function overwriteScoreboard() {
   highScores.push(new highScore('BEN', 800))
   highScores.push(new highScore('BEN', 700))
   highScores.push(new highScore('BEN', 600))
-  highScores.push(new highScore('BEN', 5000))
+  highScores.push(new highScore('BEN', 500))
   highScores.push(new highScore('BEN', 400))
   highScores.push(new highScore('BEN', 300))
   highScores.push(new highScore('BEN', 200))
@@ -168,7 +165,7 @@ function gameOver() {
   $finalScore.text('Score: ' + score)
 
   if (score > (highScores[highScores.length-1].score)) {
-    $finalScore.append('<p id="highScoreAchieved">You got a high score!</p>')
+    $finalScore.append('<p class="flash">You got a high score!</p>')
     $restartButton.hide()
     $finalScore.append('<button id="saveHighScore">Save Score</button>')
     const $saveScoreButton = $('#saveHighScore')
@@ -183,6 +180,7 @@ function alienLaserPhysics() {
   if (playerPosition === alienLaserPosition) {
     gameOver()
   } else if (alienLaserPosition > width*width) {
+    $squares.eq(alienLaserPosition).removeClass('alienLaser')
     clearTimeout(alienLaserTimer)
   } else {
     alienLaserTimer = setTimeout(alienLaserPhysics, 40)
@@ -236,15 +234,22 @@ function laserPhysics() {
   laserPosition -= width
   $squares.eq(laserPosition).addClass('laser')
   if (enemiesIndices.includes(laserPosition)){
+    $squares.eq(laserPosition).removeClass('laser')
     handleHit()
   } else if ($squares.eq(laserPosition).hasClass('mothership')) {
+    $squares.eq(laserPosition).removeClass('laser')
     handleMothershipHit()
   } else if (laserPosition > 0) {
     laserTimer = setTimeout(laserPhysics, laserSpeed)
   } else {
     $squares.eq(laserPosition).removeClass('laser')
     clearTimeout(laserTimer)
+    removeLasers()
   }
+}
+
+function removeLasers() {
+  $squares.removeClass('laser')
 }
 
 function moveAliensLeft() {
