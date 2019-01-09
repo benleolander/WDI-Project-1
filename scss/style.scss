@@ -9,7 +9,7 @@ body {
   margin: 0;
   background-image: url("../assets/background.png");
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size: cover;
   background-position: top;
 }
 
@@ -68,8 +68,17 @@ button {
   padding: 10px;
 }
 
-h2 {
+h2.wavecount {
   display: none;
+  float:left;
+  text-align: left;
+  font-family: 'Press Start 2P', cursive;
+  color: white;
+}
+
+h2.scoreboard {
+  display: none;
+  float: right;
   text-align: right;
   font-family: 'Press Start 2P', cursive;
   color: white;

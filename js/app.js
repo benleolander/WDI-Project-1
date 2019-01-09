@@ -2,6 +2,7 @@ const width = 20
 let $grid
 let $squares
 let $scoreboard
+let $wavecount
 let highScores = JSON.parse(localStorage.getItem('scores'))
 let $startScreen
 let $endScreen
@@ -24,13 +25,15 @@ let alienDifficulty
 let alienLineCount = 1
 let enemies = []
 let enemiesIndices= []
+let wave
 let score
 
 //AUDIO VARIABLES
 const shootSound = new Audio('./assets/sounds/shoot.wav')
-const mothershipSound = new Audio('./assets/sounds/ufo_highpitch.wav')
+const mothershipMoveSound = new Audio('./assets/sounds/ufo_highpitch.wav')
 const mothershipDeathSound = new Audio('./assets/sounds/explosion.wav')
 const alienDeathSound = new Audio('./assets/sounds/invaderkilled.wav')
+const alienMoveSound = new Audio('./assets/sounds/fastinvader2.wav')
 
 
 //SCOREBOARD > These functions manage the scoreboard & high score table
@@ -141,7 +144,9 @@ function levelUp() {
 
 function checkForWin() {
   if (enemiesIndices.length === 0) {
-    $squares.eq(laserPosition).removeClass('laser aliens3')
+    wave++
+    $wavecount.text('Wave: ' + wave)
+    $squares.eq(laserPosition).removeClass('laser')
     setTimeout(levelUp, 2000)
   }
 }
@@ -160,6 +165,7 @@ function handleHit() {
   $squares.eq(laserPosition).removeClass()
   enemies.splice(enemiesIndices.indexOf(laserPosition), 1)
   updateIndices()
+  alienDeathSound.currentTime = 0
   alienDeathSound.play()
   checkForWin()
 }
@@ -167,8 +173,12 @@ function handleHit() {
 //GAME FUNCTIONS > These functions control the game elements
 
 function gameOver() {
+  clearTimeout(leftTimer)
+  clearTimeout(rightTimer)
+  clearTimeout(mothershipTimer)
   $grid.hide()
   $scoreboard.hide()
+  $wavecount.hide()
   $endScreen = $('.endScreen')
   $endScreen.show()
   $grid.empty()
@@ -176,11 +186,13 @@ function gameOver() {
   $restartButton.on('click', initGame)
   const $finalScore = $('#finalScore')
   $finalScore.text('Score: ' + score)
+  const $finalWave = $('#finalWave')
+  $finalWave.text('Cleared Waves: ' + (wave-1))
 
   if (score > (highScores[highScores.length-1].score)) {
-    $finalScore.append('<p class="flash">You got a high score!</p>')
+    $finalWave.append('<p class="flash">You got a high score!</p>')
     $restartButton.hide()
-    $finalScore.append('<button id="saveHighScore">Save Score</button>')
+    $finalWave.append('<button id="saveHighScore">Save Score</button>')
     const $saveScoreButton = $('#saveHighScore')
     $saveScoreButton.on('click', saveHighScore)
   }
@@ -191,10 +203,14 @@ function alienLaserPhysics() {
   alienLaserPosition += width
   $squares.eq(alienLaserPosition).addClass('alienLaser')
   if (playerPosition === alienLaserPosition) {
+    mothershipMoveSound.pause()
+    mothershipMoveSound.currentTime = 0
+    mothershipDeathSound.play()
     gameOver()
   } else if (alienLaserPosition > width*width) {
     $squares.eq(alienLaserPosition).removeClass('alienLaser')
     clearTimeout(alienLaserTimer)
+    removeLasers()
   } else {
     alienLaserTimer = setTimeout(alienLaserPhysics, 40)
   }
@@ -217,10 +233,11 @@ function checkForAlienShoot() {
 function moveMothership() {
   $squares.eq(mothershipPosition).removeClass('mothership')
   mothershipPosition += 1
-  mothershipSound.play()
+  mothershipMoveSound.currentTime = 0
+  mothershipMoveSound.play()
   $squares.eq(mothershipPosition).addClass('mothership')
   if (mothershipPosition !== width && mothershipDestroyed === false) {
-    setTimeout(moveMothership, 250)
+    setTimeout(moveMothership, 200)
   } else {
     $squares.eq(mothershipPosition).removeClass('mothership')
     mothershipTimer = setTimeout(checkForMothership, 15000)
@@ -399,12 +416,15 @@ class Alien {
     this.type = type
   }
   moveDown(){
+    alienMoveSound.play()
     this.alienIndex = this.alienIndex+width
   }
   moveLeft(){
+    alienMoveSound.play()
     this.alienIndex = this.alienIndex-1
   }
   moveRight(){
+    alienMoveSound.play()
     this.alienIndex= this.alienIndex+1
   }
 }
@@ -426,6 +446,10 @@ function initGame() {
   score = 0
   $scoreboard.text('Score: ' + score)
   $scoreboard.show()
+  $wavecount = $('.wavecount')
+  wave = 1
+  $wavecount.text('Wave: ' + wave)
+  $wavecount.show()
 
   playerPosition = (width*width) - (width/2)
 
