@@ -29,9 +29,11 @@ let score
 
 function displayHighScores() {
   $endScreen.empty()
+  $endScreen.append('<h3>High Scores</h3>'.toUpperCase())
   for (let i=0; i<highScores.length; i++) {
-    $endScreen.append('<h2>High Scores</h2>')
     $endScreen.append('<p class="scoreBoardName">'+highScores[i].userName.toUpperCase()+'<span class="scoreBoardScore">'+highScores[i].score+'</span></p>')
+
+
   }
 }
 
@@ -249,7 +251,7 @@ function laserPhysics() {
 }
 
 function removeLasers() {
-  $squares.removeClass('laser')
+  $squares.removeClass('laser alienLaser')
 }
 
 function moveAliensLeft() {
