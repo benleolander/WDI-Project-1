@@ -2,8 +2,10 @@ const width = 20
 let $grid
 let $squares
 let $scoreboard
+let highScores = JSON.parse(localStorage.getItem('scores'))
 let $startScreen
 let $endScreen
+let highScoreUserName
 let playerPosition
 let laserPosition
 let alienLaserPosition
@@ -22,6 +24,71 @@ let alienLineCount = 1
 let enemies = []
 let enemiesIndices= []
 let score
+
+//SCOREBOARD > These functions manage the scoreboard & high score table
+
+function displayHighScores() {
+  $endScreen.empty()
+  console.table(highScores)
+  for (let i=0; i<highScores.length; i++) {
+    $endScreen.append('<h2>High Scores</h2>')
+    $endScreen.append('<p id="scoreBoardName'+i+'">'+highScores[i].userName+'</p>')
+    $endScreen.append('<p id="scoreBoardScore'+i+'">'+highScores[i].score+'</p>')
+  }
+}
+
+function submitHighScore() {
+  const newHighScore = new highScore(highScoreUserName, score)
+  for(let i=0; i<highScores.length; i++) {
+    if (score > highScores[i].score) {
+      highScores.splice(i, 0, newHighScore)
+      highScores.pop()
+      localStorage.setItem('scores', JSON.stringify(highScores))
+      console.log('High Scores saved')
+      displayHighScores()
+      break
+    }
+  }
+}
+
+function  saveHighScore() {
+  $endScreen.empty()
+  $endScreen.append('<form class="highScoreForm"><input type="text" name="userName" value ="TEST"><br><input type="submit" value="Submit"></form>')
+
+  const $highScoreForm = $('form')
+  const $userName = $('[name="userName"]')
+
+  $highScoreForm.on('submit', e => {
+    e.preventDefault()
+    highScoreUserName = $userName.val()
+    submitHighScore()
+  })
+}
+
+class highScore {
+  constructor(userName, score) {
+    this.userName = userName
+    this.score = score
+  }
+}
+
+//DEV ONLY > This fills the scoreboard with placeholder data. Should be called from the console to overwrite user local storage
+function overwriteScoreboard() {
+  highScores = []
+  highScores.push(new highScore('BEN', 1000))
+  highScores.push(new highScore('BEN', 900))
+  highScores.push(new highScore('BEN', 800))
+  highScores.push(new highScore('BEN', 700))
+  highScores.push(new highScore('BEN', 600))
+  highScores.push(new highScore('BEN', 5000))
+  highScores.push(new highScore('BEN', 400))
+  highScores.push(new highScore('BEN', 300))
+  highScores.push(new highScore('BEN', 200))
+  highScores.push(new highScore('BEN', 100))
+  localStorage.setItem('scores', JSON.stringify(highScores))
+  console.log('Scores overwritten')
+}
+
 
 //CONTROL FUNCTIONS > These functions affect the player craft
 function movePlayerLeft() {
@@ -89,18 +156,24 @@ function handleHit() {
 
 //GAME FUNCTIONS > These functions control the game elements
 
-function playerHit() {
-  console.log('player hit! Game Over')
+function gameOver() {
   $grid.hide()
   $scoreboard.hide()
-
   $endScreen = $('.endScreen')
   $endScreen.show()
-
   $grid.empty()
-
   const $restartButton = $('#restartButton')
   $restartButton.on('click', initGame)
+  const $finalScore = $('#finalScore')
+  $finalScore.text('Score: ' + score)
+
+  if (score > (highScores[highScores.length-1].score)) {
+    $finalScore.append('<p id="highScoreAchieved">You got a high score!</p>')
+    $restartButton.hide()
+    $finalScore.append('<button id="saveHighScore">Save Score</button>')
+    const $saveScoreButton = $('#saveHighScore')
+    $saveScoreButton.on('click', saveHighScore)
+  }
 }
 
 function alienLaserPhysics() {
@@ -108,7 +181,7 @@ function alienLaserPhysics() {
   alienLaserPosition += width
   $squares.eq(alienLaserPosition).addClass('alienLaser')
   if (playerPosition === alienLaserPosition) {
-    playerHit()
+    gameOver()
   } else if (alienLaserPosition > width*width) {
     clearTimeout(alienLaserTimer)
   } else {
@@ -197,7 +270,7 @@ function moveAliensLeft() {
 function moveAliensDown () {
   //Check for player loss
   if (enemiesIndices[enemiesIndices.length-1] > (width*(width-2))) {
-    playerHit()
+    gameOver()
   } else {
     //Move each alien down one row
     enemies.forEach(alien => {
@@ -282,11 +355,17 @@ function handleKeydown(e) {
     case 32: {
       e.preventDefault()
       playerShoot()
+      break
+    }
+    //Case 27 for Development use only. Simulates player death.
+    case 27: {
+      gameOver()
+      break
     }
   }
 }
 
-class Alien{
+class Alien {
   constructor(alienIndex, points, type) {
     this.alienIndex = alienIndex
     this.points = points
