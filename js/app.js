@@ -3,7 +3,8 @@ let $grid
 let $squares
 let $scoreboard
 let $startScreen
-let playerPosition = (width*width) - (width/2)
+let $endScreen
+let playerPosition
 let laserPosition
 let alienLaserPosition
 let mothershipDestroyed
@@ -89,7 +90,17 @@ function handleHit() {
 //GAME FUNCTIONS > These functions control the game elements
 
 function playerHit() {
-  alert('You are Dead! Your score is ' + score)
+  console.log('player hit! Game Over')
+  $grid.hide()
+  $scoreboard.hide()
+
+  $endScreen = $('.endScreen')
+  $endScreen.show()
+
+  $grid.empty()
+
+  const $restartButton = $('#restartButton')
+  $restartButton.on('click', initGame)
 }
 
 function alienLaserPhysics() {
@@ -186,7 +197,7 @@ function moveAliensLeft() {
 function moveAliensDown () {
   //Check for player loss
   if (enemiesIndices[enemiesIndices.length-1] > (width*(width-2))) {
-    alert('Game Over! Your score is ' + score)
+    playerHit()
   } else {
     //Move each alien down one row
     enemies.forEach(alien => {
@@ -295,16 +306,32 @@ class Alien{
 function initGame() {
   $startScreen = $('.startScreen')
   $startScreen.hide()
+  const $endScreen = $('.endScreen')
+  $endScreen.hide()
 
   $grid = $('.grid')
+  $grid.show()
   for (let i=0; i<width*width; i++) {
     $grid.append($('<div />'))
   }
+
   $squares = $grid.find('div')
   $scoreboard = $('.scoreboard')
+  score = 0
+  $scoreboard.text('Score: ' + score)
   $scoreboard.show()
 
+  playerPosition = (width*width) - (width/2)
+
   $squares.eq(playerPosition).addClass('player')
+
+  enemies = []
+  enemiesIndices = []
+  alienLineCount = 1
+  clearTimeout(leftTimer)
+  clearTimeout(rightTimer)
+  clearTimeout(mothershipTimer)
+  updateIndices()
 
   spawnAliens()
   moveAliensRight()
@@ -315,7 +342,6 @@ function init() {
 
   delay = 1000
   alienDifficulty = 0.5
-  score = 0
 
   const $startButton = $('#startButton')
   $startButton.on('click', initGame)
