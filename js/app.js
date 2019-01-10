@@ -163,6 +163,10 @@ function handleMothershipHit() {
   clearTimeout(mothershipMoveTimer)
   mothershipDeathSound.play()
   $squares.removeClass('mothership')
+  $squares.eq(mothershipPosition).addClass('explosion')
+  setTimeout(function() {
+    $squares.eq(mothershipPosition).removeClass('explosion')
+  }, 100)
   $scoreboard.text('Score: ' + score)
 }
 
@@ -189,6 +193,10 @@ function handlePlayerHit() {
   $(document).off('keydown')
   redrawLivesCount()
   $squares.eq(playerPosition).removeClass()
+  $squares.eq(playerPosition).addClass('explosion')
+  setTimeout(function() {
+    $squares.eq(playerPosition).removeClass('explosion')
+  }, 100)
   if (livesRemaining.length === 0) {
     gameOver()
   }
@@ -199,6 +207,10 @@ function handleHit() {
   score += deadAlien.points
   $scoreboard.text('Score: ' + score)
   $squares.eq(laserPosition).removeClass()
+  $squares.eq(laserPosition).addClass('explosion')
+  setTimeout(function() {
+    $squares.eq(laserPosition).removeClass('explosion')
+  }, 100)
   enemies.splice(enemiesIndices.indexOf(laserPosition), 1)
   updateIndices()
   alienDeathSound.currentTime = 0
@@ -295,7 +307,7 @@ function spawnMothership() {
 function checkForMothership() {
   $squares.removeClass('mothership')
   const mothershipProb = Math.random()
-  if (mothershipProb > -1) {
+  if (mothershipProb > 0.65) {
     spawnMothership()
   } else {
     mothershipTimer = setTimeout(checkForMothership, 15000)

@@ -136,6 +136,13 @@ transform: scale(1.5);
   background-position: center;
 }
 
+.grid div.explosion {
+  background-image: url("../assets/explosion.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 .grid div.alienLaser {
   background-image: url("../assets/laserGreen11.png");
   background-repeat: no-repeat;
