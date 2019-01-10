@@ -25,8 +25,11 @@ let alienDifficulty
 let alienLineCount = 1
 let enemies = []
 let enemiesIndices= []
+const lives = 3
+const livesRemaining = []
 let wave
 let score
+let gameIsOver
 
 //AUDIO VARIABLES
 const shootSound = new Audio('./assets/sounds/shoot.wav')
@@ -43,9 +46,10 @@ function displayHighScores() {
   $endScreen.append('<h3>High Scores</h3>'.toUpperCase())
   for (let i=0; i<highScores.length; i++) {
     $endScreen.append('<p class="scoreBoardName">'+highScores[i].userName.toUpperCase()+'<span class="scoreBoardScore">'+highScores[i].score+'</span></p>')
-
-
   }
+  $endScreen.append('<button id="restartButton">Play Again</button>')
+  const $restartButton = $('#restartButton')
+  $restartButton.on('click', initGame)
 }
 
 function submitHighScore() {
@@ -63,7 +67,7 @@ function submitHighScore() {
 
 function  saveHighScore() {
   $endScreen.empty()
-  $endScreen.append('<form class="highScoreForm"><input type="text" name="userName" placeholder ="NAME"><br><input type="submit" value="Submit"></form>')
+  $endScreen.append('<form class="highScoreForm"><input type="text" name="userName" placeholder ="NAME" autofocus><br><button>Submit</button></form>')
 
   const $highScoreForm = $('form')
   const $userName = $('[name="userName"]')
@@ -128,9 +132,7 @@ function playerShoot() {
 
 function levelUp() {
   delay -= 200
-  console.log(delay)
   alienDifficulty += 0.1
-  console.log(alienDifficulty)
   enemies = []
   enemiesIndices = []
   alienLineCount = 1
@@ -147,6 +149,7 @@ function checkForWin() {
     wave++
     $wavecount.text('Wave: ' + wave)
     $squares.eq(laserPosition).removeClass('laser')
+    removeLasers()
     setTimeout(levelUp, 2000)
   }
 }
@@ -173,9 +176,11 @@ function handleHit() {
 //GAME FUNCTIONS > These functions control the game elements
 
 function gameOver() {
+  gameIsOver = true
   clearTimeout(leftTimer)
   clearTimeout(rightTimer)
   clearTimeout(mothershipTimer)
+  mothershipDestroyed = true
   $grid.hide()
   $scoreboard.hide()
   $wavecount.hide()
@@ -238,22 +243,28 @@ function moveMothership() {
   $squares.eq(mothershipPosition).addClass('mothership')
   if (mothershipPosition !== width && mothershipDestroyed === false) {
     setTimeout(moveMothership, 200)
-  } else {
+  } else if(mothershipPosition === width){
     $squares.eq(mothershipPosition).removeClass('mothership')
+    mothershipMoveSound.pause()
+    mothershipDestroyed = true
     mothershipTimer = setTimeout(checkForMothership, 15000)
   }
 }
 
 function spawnMothership() {
-  mothershipDestroyed = false
-  mothershipPosition = 0
-  $squares.eq(mothershipPosition).addClass('mothership')
-  setTimeout(moveMothership, 200)
+  if (!gameIsOver) {
+    $squares.removeClass('mothership')
+    mothershipDestroyed = false
+    mothershipPosition = 0
+    $squares.eq(mothershipPosition).addClass('mothership')
+    setTimeout(moveMothership, 200)
+  }
 }
 
 function checkForMothership() {
+  $squares.removeClass('mothership')
   const mothershipProb = Math.random()
-  if (mothershipProb > 0) {
+  if (mothershipProb > 0.6) {
     spawnMothership()
   } else {
     mothershipTimer = setTimeout(checkForMothership, 15000)
@@ -429,7 +440,17 @@ class Alien {
   }
 }
 
+function calculateLives() {
+  console.log('Caculating lives')
+  console.log(lives)
+  for (let i=0; i<lives; i++) {
+    livesRemaining.unshift(i)
+    console.log(livesRemaining)
+  }
+}
+
 function initGame() {
+  gameIsOver = false
   $startScreen = $('.startScreen')
   $startScreen.hide()
   const $endScreen = $('.endScreen')
@@ -465,6 +486,7 @@ function initGame() {
 
   spawnAliens()
   moveAliensRight()
+  calculateLives()
 }
 
 function init() {

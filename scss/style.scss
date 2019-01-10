@@ -68,6 +68,26 @@ button {
   padding: 10px;
 }
 
+button:focus {
+  outline: none;
+}
+
+input {
+  outline: none;
+  border: none;
+  border-bottom: 5px solid white;
+  font-family: 'Press Start 2P', cursive;
+  color: white;
+  background-color: transparent;
+  margin: 20px 0;
+  font-size: 1em;
+  max-width: 80%
+}
+
+input:focus {
+  outline: none;
+}
+
 h2.wavecount {
   display: none;
   float:left;
