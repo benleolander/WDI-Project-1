@@ -13,6 +13,7 @@ let laserPosition
 let alienLaserPosition
 let mothershipDestroyed
 let mothershipPosition
+let mothershipMoveTimer
 let mothershipTimer
 let rightTimer
 let leftTimer
@@ -28,6 +29,7 @@ let enemies = []
 let enemiesIndices= []
 const lives = 3
 const livesRemaining = []
+let $livesCountImgs
 let wave
 let score
 let gameIsOver
@@ -158,7 +160,9 @@ function checkForWin() {
 function handleMothershipHit() {
   score += 250
   mothershipDestroyed = true
+  clearTimeout(mothershipMoveTimer)
   mothershipDeathSound.play()
+  $squares.removeClass('mothership')
   $scoreboard.text('Score: ' + score)
 }
 
@@ -167,15 +171,15 @@ function respawnPlayer() {
   $(document).on('keydown', handleKeydown)
 }
 
-// function appendLivesCount() {
-//   const $livesCountImgs = $('.livesCountImgs')
-//   $livesCountImgs.append('<img class="playerLives"></img>')
-// }
+function appendLivesCount() {
+  $livesCountImgs = $('.livesCountImgs')
+  $livesCountImgs.append('<img class="playerLives"></img>')
+}
 
 function redrawLivesCount() {
-  // livesRemaining.forEach(appendLivesCount)
-  const $livesCount = $('.livesCount')
-  $livesCount.text('Lives: ' + livesRemaining.length)
+  $livesCountImgs = $('.livesCountImgs')
+  $livesCountImgs.text('')
+  livesRemaining.forEach(appendLivesCount)
 }
 
 function handlePlayerHit() {
@@ -211,11 +215,10 @@ function gameOver() {
   clearTimeout(mothershipTimer)
   mothershipDestroyed = true
   $grid.hide()
-  $scoreboard.hide()
-  $wavecount.hide()
+  $grid.empty()
+  $gameTrackers.hide()
   $endScreen = $('.endScreen')
   $endScreen.show()
-  $grid.empty()
   const $restartButton = $('#restartButton')
   $restartButton.on('click', initGame)
   const $finalScore = $('#finalScore')
@@ -270,7 +273,7 @@ function moveMothership() {
   mothershipMoveSound.play()
   $squares.eq(mothershipPosition).addClass('mothership')
   if (mothershipPosition !== width && mothershipDestroyed === false) {
-    setTimeout(moveMothership, 200)
+    mothershipMoveTimer = setTimeout(moveMothership, 200)
   } else if(mothershipPosition === width){
     $squares.eq(mothershipPosition).removeClass('mothership')
     mothershipMoveSound.pause()
@@ -292,7 +295,7 @@ function spawnMothership() {
 function checkForMothership() {
   $squares.removeClass('mothership')
   const mothershipProb = Math.random()
-  if (mothershipProb > 0.6) {
+  if (mothershipProb > -1) {
     spawnMothership()
   } else {
     mothershipTimer = setTimeout(checkForMothership, 15000)
