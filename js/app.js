@@ -1,6 +1,7 @@
 const width = 20
 let $grid
 let $squares
+let $gameTrackers
 let $scoreboard
 let $wavecount
 let highScores = JSON.parse(localStorage.getItem('scores'))
@@ -161,6 +162,34 @@ function handleMothershipHit() {
   $scoreboard.text('Score: ' + score)
 }
 
+function respawnPlayer() {
+  $squares.eq(playerPosition).addClass('player')
+  $(document).on('keydown', handleKeydown)
+}
+
+// function appendLivesCount() {
+//   const $livesCountImgs = $('.livesCountImgs')
+//   $livesCountImgs.append('<img class="playerLives"></img>')
+// }
+
+function redrawLivesCount() {
+  // livesRemaining.forEach(appendLivesCount)
+  const $livesCount = $('.livesCount')
+  $livesCount.text('Lives: ' + livesRemaining.length)
+}
+
+function handlePlayerHit() {
+  livesRemaining.shift()
+  mothershipDeathSound.play()
+  setTimeout(respawnPlayer, 2000)
+  $(document).off('keydown')
+  redrawLivesCount()
+  $squares.eq(playerPosition).removeClass()
+  if (livesRemaining.length === 0) {
+    gameOver()
+  }
+}
+
 function handleHit() {
   const deadAlien = enemies[enemiesIndices.indexOf(laserPosition)]
   score += deadAlien.points
@@ -210,8 +239,7 @@ function alienLaserPhysics() {
   if (playerPosition === alienLaserPosition) {
     mothershipMoveSound.pause()
     mothershipMoveSound.currentTime = 0
-    mothershipDeathSound.play()
-    gameOver()
+    handlePlayerHit()
   } else if (alienLaserPosition > width*width) {
     $squares.eq(alienLaserPosition).removeClass('alienLaser')
     clearTimeout(alienLaserTimer)
@@ -441,11 +469,8 @@ class Alien {
 }
 
 function calculateLives() {
-  console.log('Caculating lives')
-  console.log(lives)
   for (let i=0; i<lives; i++) {
     livesRemaining.unshift(i)
-    console.log(livesRemaining)
   }
 }
 
@@ -462,15 +487,16 @@ function initGame() {
     $grid.append($('<div />'))
   }
 
+  $gameTrackers = $('.gameTrackers')
+
   $squares = $grid.find('div')
   $scoreboard = $('.scoreboard')
   score = 0
   $scoreboard.text('Score: ' + score)
-  $scoreboard.show()
   $wavecount = $('.wavecount')
   wave = 1
   $wavecount.text('Wave: ' + wave)
-  $wavecount.show()
+  $gameTrackers.css('display', 'flex')
 
   playerPosition = (width*width) - (width/2)
 
@@ -483,10 +509,11 @@ function initGame() {
   clearTimeout(rightTimer)
   clearTimeout(mothershipTimer)
   updateIndices()
+  calculateLives()
+  redrawLivesCount()
 
   spawnAliens()
   moveAliensRight()
-  calculateLives()
 }
 
 function init() {
