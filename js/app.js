@@ -35,6 +35,7 @@ let score
 let gameIsOver
 
 //AUDIO VARIABLES
+const bgm = new Audio('./assets/sounds/bgm.mp3')
 const shootSound = new Audio('./assets/sounds/shoot.wav')
 const mothershipMoveSound = new Audio('./assets/sounds/ufo_highpitch.wav')
 const mothershipDeathSound = new Audio('./assets/sounds/explosion.wav')
@@ -526,17 +527,15 @@ function initGame() {
   updateIndices()
   calculateLives()
   redrawLivesCount()
-
+  bgm.play()
   spawnAliens()
   moveAliensRight()
 }
 
 function init() {
   $(document).on('keydown', handleKeydown)
-
   delay = 1000
   alienDifficulty = 0.5
-
   const $startButton = $('#startButton')
   $startButton.on('click', initGame)
 }
