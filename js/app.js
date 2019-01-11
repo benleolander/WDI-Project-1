@@ -61,7 +61,7 @@ function submitHighScore() {
   for(let i=0; i<highScores.length; i++) {
     if (score > highScores[i].score) {
       highScores.splice(i, 0, newHighScore)
-      if (highScores.length >= 10) {
+      if (highScores.length > 10) {
         highScores.pop()
       }
       localStorage.setItem('scores', JSON.stringify(highScores))
@@ -310,7 +310,7 @@ function spawnMothership() {
 function checkForMothership() {
   $squares.removeClass('mothership')
   const mothershipProb = Math.random()
-  if (mothershipProb > -1) {
+  if (mothershipProb > 0.65) {
     spawnMothership()
   } else {
     mothershipTimer = setTimeout(checkForMothership, 15000)
