@@ -79,7 +79,7 @@ Another challenge was that the game requires the redrawing of the gameboard mult
 ## Wins
 When planning the project, I anticipated that the collision detection would be the most complex part. I am pleased with my use of arrays and the jQuery '.includes' function to overcome this.
 
-I also put a lot of time into the functions related to the High Score table. The result needs minimal refactoring, and could easily be reused in future projects. It should take up minimal space on a users local device, due to the length limit I've put in place.
+I also put a lot of time into the functions related to the High Score table. The result should need minimal refactoring, and could easily be reused in future projects. It should take up minimal space on a users local device, due to the length limit I've put in place.
 
 ## Future Features
 
