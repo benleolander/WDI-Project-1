@@ -22,7 +22,7 @@
 ### Game Overview
 Space Invaders is a classic arcade game from the 80's. The player aims to shoot an invading alien armada, before it reaches the planet's surface using a mobile ship.
 
-The player can only move left or right. The aliens also move from left to right, and also down each time the reach the side of the screen. The aliens also periodically fire at the player.
+The player can only move left or right. The aliens also move from left to right, and also down each time they reach the side of the screen. The aliens also periodically fire at the player.
 
 Once the player has destroyed a wave of aliens, the game starts again. The aim is to achieve the highest score possible before either being destroyed by the aliens, or allowing them to reach the planet's surface.
 
@@ -63,9 +63,9 @@ A 'for' loop generates 55 aliens, as in the original game. These aliens are crea
 
 ![Alien constructor function from app.js](https://user-images.githubusercontent.com/44977343/51029535-89073100-158e-11e9-9402-d09e1b90bae5.png)
 
-Each alien is then pushed into an 'enemies' array. While the game is running, the array runs the appropriate movement function at a set interval. In the first wave, this interval is 1 second, although this decreases as the player clears waves, making the aliens move faster.
+Each alien is then pushed into an 'enemies' array. While the game is running, each item in the array runs the appropriate movement function at a set interval. In the first wave, this interval is 1 second, although this decreases as the player clears waves, making the aliens move faster.
 
-When the player fires, a CSS class of 'laser' is applied, which travels up the gameboard vertically, checking for a collision on each movement. If this laser makes contact with any index contained the 'enemies' array, the target index is 'splice'd out of the array, and an 'explosion' class is temporarily added then removed along with the 'alien' class. This removes the alien object from the 'enemies' array, so that the other aliens will continue to move around the dead alien.
+When the player fires, a CSS class of 'laser' is applied, which travels up the gameboard vertically, checking for a collision on each movement. If this laser makes contact with any index contained the 'enemies' array, the target index is 'splice'd out of the array, and an 'explosion' class is temporarily added, then removed along with the 'alien' class. This removes the alien object from the 'enemies' array, so that the other aliens will continue to move around the dead alien.
 
 Each time the aliens' movement function is run, a random number is generated. If this number exceeds a given 'alienDifficulty' value, the alien will fire on the player. The 'alienLaser' uses the same movement pattern as the player's laser, but in reverse. The 'alienDifficulty' value is adjusted as the waves go on, making it more likely that later waves of aliens will fire on the player.
 
