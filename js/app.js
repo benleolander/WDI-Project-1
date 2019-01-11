@@ -28,7 +28,7 @@ let alienLineCount = 1
 let enemies = []
 let enemiesIndices= []
 let lives = 3
-const livesRemaining = []
+let livesRemaining = []
 let $livesCountImgs
 let wave
 let score
@@ -85,14 +85,14 @@ function  saveHighScore() {
   })
 }
 
+
+//DEV ONLY > This function fills the scoreboard with placeholder data. Should be called from the console to overwrite user local storage. Will erase any saved high scores.
 class highScore {
   constructor(userName, score) {
     this.userName = userName
     this.score = score
   }
 }
-
-//DEV ONLY > This function fills the scoreboard with placeholder data. Should be called from the console to overwrite user local storage. Will erase any saved high scores.
 function overwriteScoreboard() {
   highScores = []
   highScores.push(new highScore('BEN', 1000))
@@ -184,6 +184,7 @@ function appendLivesCount() {
 }
 
 function redrawLivesCount() {
+  console.log(livesRemaining)
   $livesCountImgs = $('.livesCountImgs')
   $livesCountImgs.text('')
   livesRemaining.forEach(appendLivesCount)
@@ -236,6 +237,7 @@ function gameOver() {
   $endScreen.show()
   const $restartButton = $('#restartButton')
   lives = 3
+  redrawLivesCount()
   $restartButton.on('click', initGame)
   const $finalScore = $('#finalScore')
   $finalScore.text('Score: ' + score)
@@ -527,6 +529,8 @@ function initGame() {
   clearTimeout(rightTimer)
   clearTimeout(mothershipTimer)
   updateIndices()
+  lives = 3
+  livesRemaining = []
   calculateLives()
   redrawLivesCount()
   bgm.play()
