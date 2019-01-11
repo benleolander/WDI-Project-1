@@ -27,7 +27,7 @@ let alienDifficulty
 let alienLineCount = 1
 let enemies = []
 let enemiesIndices= []
-const lives = 3
+let lives = 3
 const livesRemaining = []
 let $livesCountImgs
 let wave
@@ -61,7 +61,9 @@ function submitHighScore() {
   for(let i=0; i<highScores.length; i++) {
     if (score > highScores[i].score) {
       highScores.splice(i, 0, newHighScore)
-      highScores.pop()
+      if (highScores.length >= 10) {
+        highScores.pop()
+      }
       localStorage.setItem('scores', JSON.stringify(highScores))
       displayHighScores()
       break
@@ -233,6 +235,7 @@ function gameOver() {
   $endScreen = $('.endScreen')
   $endScreen.show()
   const $restartButton = $('#restartButton')
+  lives = 3
   $restartButton.on('click', initGame)
   const $finalScore = $('#finalScore')
   $finalScore.text('Score: ' + score)
@@ -289,7 +292,6 @@ function moveMothership() {
     mothershipMoveTimer = setTimeout(moveMothership, 200)
   } else if(mothershipPosition === width){
     $squares.eq(mothershipPosition).removeClass('mothership')
-    mothershipMoveSound.pause()
     mothershipDestroyed = true
     mothershipTimer = setTimeout(checkForMothership, 15000)
   }
@@ -308,7 +310,7 @@ function spawnMothership() {
 function checkForMothership() {
   $squares.removeClass('mothership')
   const mothershipProb = Math.random()
-  if (mothershipProb > 0.65) {
+  if (mothershipProb > -1) {
     spawnMothership()
   } else {
     mothershipTimer = setTimeout(checkForMothership, 15000)
